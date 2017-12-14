@@ -8,7 +8,7 @@ const {Router} = require('express');
 const jsonParser = require('body-parser').json();
 
 const Cyclist = require('../model/cyclist');
-// const Event = require('../model/event');
+const Discipline = require('../model/discipline');
 
 const logger = require('../lib/logger');
 
@@ -42,6 +42,7 @@ cyclistRouter.get('/api/cyclists', (request, response, next) => {
 
 cyclistRouter.get('/api/cyclists/:id', (request, response, next) => {
   return Cyclist.findById(request.params.id)
+    .populate('discipline') // Use with care; this grabs the entire discipline object..might be possible to grab part of this instead?
     .then(cyclist => {
       if(!cyclist) {
         throw httpErrors(404, 'note not found');
