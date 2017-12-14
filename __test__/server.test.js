@@ -94,9 +94,9 @@ describe('api/cyclists', () => {
           expect(response.status).toEqual(200);
           expect(response.body._id).toEqual(cyclistToTest._id.toString());
           expect(response.body.timestamp).toBeTruthy();
-          expect(response.body.Brand).toEqual(cyclistToTest.Brand);
-          expect(response.body.Model).toEqual(cyclistToTest.Model);
-          expect(response.body.Discipline).toEqual(cyclistToTest.Discipline);		
+          expect(response.body.name).toEqual(cyclistToTest.name);
+          expect(response.body.age).toEqual(cyclistToTest.age);
+          expect(response.body.discipline).toEqual(cyclistToTest.discipline);		
         })
         .catch(error => logger.log(error));
     });
@@ -118,6 +118,28 @@ describe('api/cyclists', () => {
         .catch(response => {
           expect(response.status).toEqual(404);
         });
+    });
+  });
+
+  describe('PUT /api/bicycles', () => {
+    test('PUT - should respond with a 200 status code if there is no error', () => {
+      let cyclistToTest = null;
+
+      return cyclistMockCreate()
+        .then(cyclist => {
+          cyclistToTest = cyclist;
+          return superagent.put(`${apiURL}/${cyclist._id}`)
+            .send({discipline: 'Cyclocross'});
+        })
+        .then(response => {
+          expect(response.status).toEqual(200);
+          expect(response.body._id).toEqual(cyclistToTest._id.toString());
+          expect(response.body.timestamp).toBeTruthy();
+          expect(response.body.name).toEqual('Cyclocross');
+          expect(response.body.age).toEqual(cyclistToTest.age);
+          expect(response.body.discipline).toEqual(cyclistToTest.discipline);
+        })
+        .catch(error => logger.log(error));
     });
   });
 

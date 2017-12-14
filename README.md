@@ -1,4 +1,4 @@
-##Lab 10 - HTTP REST Server
+##Lab 13 - 
 
 ##Objective
 To make a lightweight, RESTFUL server which has GET, POST, and DELETE CRUD methods and tests which verify common functionality of these methods.  Furthermore, a connection with a Mongo DB instance is created and information may be stored for later retrieval.  The object created for storage is a Bicycle with a schema identifying the brand, model, and discipline it is intended for.  Mongo auto generates a unique ID and timestamp which follow the object into the DB.
@@ -55,3 +55,7 @@ Errors are handled by the error middleware, which parses out error statuses and 
   * Returns a 204 success status code if deletion is completed
   * Returns a 400 failure status code if id is missing from request
   * Returns a 404 failure status code if invalid id is included in request
+* `PUT /api/bicycles/:id`
+  * Updates a single bicycle from the Mongo DB when run with a valid id as argument
+  * Returns a 200 success status code if update is completed
+  * Returns a 404 failure status code if a correct id is not used.

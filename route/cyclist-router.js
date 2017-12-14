@@ -52,6 +52,20 @@ cyclistRouter.get('/api/cyclists/:id', (request, response, next) => {
     .catch(next);
 });
 
+cyclistRouter.put('/api/cyclists/:id', jsonParser,  (request, response, next) => {
+  let options = { runValidators: true, new: true};
+
+  return Cyclist.findByIdAndUpdate(request.params.id, request.body, options)
+    .then(cyclist => {
+      if(!cyclist) {
+        throw httpErrors(404, 'cyclist not found');
+      }
+      logger.log('info', 'PUT - responding with a 200 success code at /api/cyclists/:id');
+      return response.json(cyclist);
+    })
+    .catch(next);
+});
+
 cyclistRouter.delete('/api/cyclists/:id', (request, response, next) => {
   return Cyclist.findByIdAndRemove(request.params.id)
     .then(cyclist => {
