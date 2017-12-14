@@ -8,61 +8,70 @@ process.env.MONGODB_URI = 'mongodb://localhost/testing';
 
 // const faker = require('faker');
 const superagent = require('superagent');
-const Bicycle = require('../model/bicycle');
+const Cyclist = require('../model/cyclist');
+// const Event = require('../model/event');
 const server = require('../lib/server');
 const logger = require('../lib/logger');
 
-const apiURL = `http://localhost:${process.env.PORT}/api/bicycles`;
+const apiURL = `http://localhost:${process.env.PORT}/api/cyclists`;
 
-const bicycleMockCreate = () => {
-  return new Bicycle({
-    Brand: 'Mercian',
-    Model: 'Vincitore',
-    Discipline: 'Randonneur',
+const cyclistMockCreate = () => {
+  return new Cyclist({
+    name: 'Zdenek Stybar',
+    age: '32',
+    discipline: 'Road',
+    eventsEntered: '8',
+    events: '[{ 2, 3, 4, 5, 12, 34, 65, 68}]',
   }).save();
 };
 
-const bicycleMockCreate2 = () => {
-  return new Bicycle({
-    Brand: 'Elephant',
-    Model: 'NFE',
-    Discipline: 'Groad',
+const cyclistMockCreate2 = () => {
+  return new Cyclist({
+    name: 'Lars Boom',
+    age: '31',
+    discipline: 'Road',
+    eventsEntered: '11',
+    events: '[{ 4, 5, 9, 12, 16, 20, 21, 25, 39, 62, 70}]',
   }).save();
 };
 
-describe('api/bicycles', () => {
+describe('api/cyclists', () => {
   beforeAll(server.start);
   afterAll(server.stop);
-  // afterEach(() => Bicycle.remove({}));
+  afterEach(() => Cyclist.remove({}));
 
-  describe('POST /api/bicycles', () => {
+  describe('POST /api/cyclists', () => {
     test('POST - should respond with a bicycle and 200 status code if there is no error', () => {
-      let bicycleToPost = {
-        Brand: 'Cinelli',
-        Model: 'Pista',
-        Discipline: 'Track',
+      let cyclistToPost = {
+        name: 'Lars Boom',
+        age: '31',
+        discipline: 'Road',
+        eventsEntered: '11',
+        events: '[{ 4, 5, 9, 12, 16, 20, 21, 25, 39, 62, 70}]',
       };
       return superagent.post(`${apiURL}`)
-        .send(bicycleToPost)
+        .send(cyclistToPost)
         .then(response => {
           expect(response.status).toEqual(200);
           expect(response.body._id).toBeTruthy();
           expect(response.body.timestamp).toBeTruthy();
 
-          expect(response.body.Brand).toEqual(bicycleToPost.Brand);
-          expect(response.body.Model).toEqual(bicycleToPost.Model);
-          expect(response.body.Type).toEqual(bicycleToPost.Type);
+          expect(response.body.name).toEqual(cyclistToPost.name);
+          expect(response.body.age).toEqual(cyclistToPost.age);
+          expect(response.body.discipline).toEqual(cyclistToPost.discipline);
+          expect(response.body.eventsEntered).toEqual(11);
+          expect(response.body.count).toEqual(11);
         })
         .catch(error => logger.log(error));
     });
 		
     test('POST - should respond with a 400 status code if the bicycle is incomplete', () => {
-      let bicycleToPost = {
-        Model: 'Supercorsa',
+      let cyclistToPost = {
+        Cyclist: 'Lars Boom',
         Discipline: 'Track',
       };
       return superagent.post(`${apiURL}`)
-        .send(bicycleToPost)
+        .send(cyclistToPost)
         .then(Promise.reject)
         .catch(response => {
           expect(response.status).toEqual(400);
@@ -73,27 +82,27 @@ describe('api/bicycles', () => {
 		
   describe('GET /api/bicycles', () => {
     test('GET - should respond with a 200 status code if there is no error', () => {
-      let bicycleToTest = null;
+      let cyclistToTest = null;
 
-      return bicycleMockCreate()
-        .then(bicycle => {
+      return cyclistMockCreate()
+        .then(cyclist => {
         //may want to add error checking after this success test
-          bicycleToTest = bicycle;
-          return superagent.get(`${apiURL}/${bicycle._id}`);
+          cyclistToTest = cyclist;
+          return superagent.get(`${apiURL}/${cyclist._id}`);
         })
         .then(response => {
           expect(response.status).toEqual(200);
-          expect(response.body._id).toEqual(bicycleToTest._id.toString());
+          expect(response.body._id).toEqual(cyclistToTest._id.toString());
           expect(response.body.timestamp).toBeTruthy();
-          expect(response.body.Brand).toEqual(bicycleToTest.Brand);
-          expect(response.body.Model).toEqual(bicycleToTest.Model);
-          expect(response.body.Discipline).toEqual(bicycleToTest.Discipline);		
+          expect(response.body.Brand).toEqual(cyclistToTest.Brand);
+          expect(response.body.Model).toEqual(cyclistToTest.Model);
+          expect(response.body.Discipline).toEqual(cyclistToTest.Discipline);		
         })
         .catch(error => logger.log(error));
     });
     test('GET - should respond with a 200 status code if there is no error', () => {
-      return bicycleMockCreate()
-        .then(() => bicycleMockCreate2())
+      return cyclistMockCreate()
+        .then(() => cyclistMockCreate2())
         .then(() => { 
           return superagent.get(`${apiURL}`);
         })
@@ -114,9 +123,9 @@ describe('api/bicycles', () => {
 
   describe('DELETE /api/bicycles/:id', () => {
     test('DELETE - should respond with no body and a 204 status code if there is no error', () => {
-      return bicycleMockCreate()
-        .then(bicycle => {
-          return superagent.delete(`${apiURL}/${bicycle._id}`);
+      return cyclistMockCreate()
+        .then(cyclist => {
+          return superagent.delete(`${apiURL}/${cyclist._id}`);
         })
         .then(response => {
           expect(response.status).toEqual(204);

@@ -3,24 +3,27 @@
 //mongoose is the ORM to connect to mongo
 const mongoose = require('mongoose');
 
-const bicycleSchema = mongoose.Schema ({
-  Brand: {
+const eventSchema = mongoose.Schema({
+  Event: {
     type: String,
     required: true,
-    unique: false,
+    unique: true,
     maxlength: 50,
   },
-  Model: {
+  Location: {
     type: String,
     required: true,
-    unique: false,
-    maxlength: 50,
+    maxlength: 25,
   },
-  Discipline: {
-    type: String,
+  Stages: {
+    type: Number,
+    required: true,
+    maxlength: 2,
+  },
+  Date: {
+    type: Date,
     required: false,
-    unique: false,
-    maxlength: 50,
+    maxlength: 15,
   },
   timestamp: {
     type: Date,
@@ -29,4 +32,4 @@ const bicycleSchema = mongoose.Schema ({
 });
 
 //internally, this becomes 'notes';
-module.exports = mongoose.model('bicycle', bicycleSchema);
+module.exports = mongoose.model('event', eventSchema);
