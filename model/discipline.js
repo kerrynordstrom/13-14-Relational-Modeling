@@ -9,11 +9,6 @@ const disciplineSchema = mongoose.Schema({
     required: true,
     maxlength: 10,
   },
-  cyclistsTotal: {
-    type: Number,
-    required: true,
-    maxlength: 8,
-  },
   cyclists: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'cyclist'}],
