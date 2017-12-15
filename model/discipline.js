@@ -7,14 +7,12 @@ const disciplineSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
-    maxlength: 10,
+    maxlength: 15,
   },
+  tags: [{ type: String }],
   cyclists: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'cyclist'}],
-  // events: [{
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'event'}],
   timestamp: {
     type: Date,
     default: () => new Date(),

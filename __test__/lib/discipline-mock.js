@@ -7,8 +7,8 @@ const disciplineMock = module.exports = {};
 
 disciplineMock.create = () => {
   return new Discipline({
-    name: faker.lorem.words(7),
-    cyclists: faker.lorem.words(3).split(' '),
+    name: faker.lorem.words(1),
+    tags: faker.lorem.words(3).split(' '),
   }).save();
 };
 

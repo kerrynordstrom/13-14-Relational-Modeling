@@ -8,14 +8,15 @@ const cyclistMock = module.exports = {};
 
 cyclistMock.create = () => {
   let mock = {};
+
   return disciplineMock.create()
     .then(discipline => {
       mock.discipline = discipline;
 
       return new Cyclist({
-        name: faker.lorem.words(2),
-        age: faker.random.number(1),
-        eventsEntered: faker.random.number(1),
+        name: faker.name.firstName(2),
+        age: faker.random.number(65),
+        eventsEntered: faker.random.number(55),
         discipline: discipline._id,
       }).save();
     })

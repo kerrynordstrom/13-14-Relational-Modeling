@@ -8,7 +8,6 @@ const {Router} = require('express');
 const jsonParser = require('body-parser').json();
 
 const Cyclist = require('../model/cyclist');
-const Discipline = require('../model/discipline');
 
 const logger = require('../lib/logger');
 
@@ -20,32 +19,61 @@ const cyclistRouter = module.exports = new Router();
 
 //the next callback does not return a promise; this was introduce prior to that functionality
 cyclistRouter.post('/api/cyclists', jsonParser, (request, response, next) => {
-  logger.log('info', 'POST - processing a request at /api/cyclists');
-	
-  if(!request.body.Brand || !request.body.Model) {
-    return next(httpErrors(400, 'Body and content are required'));
+  console.log('hey, i\'m here bro');
+  if(!request.body.name || !request.body.age) {
+    return next(httpErrors(400, 'Name and age are required'));
   }
+  console.log('hey, i\'m still here man');
   return new Cyclist(request.body).save()  
-    .then(cyclist => response.json(cyclist)) //this sends a 200 success code
-    .catch(next);
+    .then(cyclist => response.json(cyclist))
+    .catch(error => next(error));
 });
 
 //TODO fix this to reflect "next" syntax
 cyclistRouter.get('/api/cyclists', (request, response, next) => {
-  logger.log('info', 'GET - processing a request at /api/cyclists');
+  const PAGE_SIZE = 5;
+
+  let {page = '0'} = request.query;
+  page = Number(page);
+
+  if(isNaN(page))
+    page = 0;
+
+  page = page < 0 ? 0 : page;
+
+  let allCyclists = null;
+
   return Cyclist.find({})
+    .skip(page * PAGE_SIZE)
+    .limit(PAGE_SIZE)
     .then(cyclists => {
-      return response.json(cyclists);
+      allCyclists = cyclists;
+      return Cyclist.find({}).count();
     })
-    .catch(next);
+    .then(cyclistCount => {
+      let responseData = {
+        count: cyclistCount,
+        data: allCyclists,
+      };
+
+      let lastPage = Math.floor(cyclistCount / PAGE_SIZE);
+
+      response.links({
+        next: `http://localhost:${process.env.PORT}/api/cyclists?page=${page === lastPage ? lastPage : page + 1}`,
+        prev: `http://localhost:${process.env.PORT}/api/cyclists?page=${page < 1 ? 0 : page - 1}`,
+        last: `http://localhost:${process.env.PORT}/api/cyclists?page=${lastPage}`,
+      });
+      return response.json(responseData);
+    });
 });
+
 
 cyclistRouter.get('/api/cyclists/:id', (request, response, next) => {
   return Cyclist.findById(request.params.id)
-    .populate('discipline') // Use with care; this grabs the entire discipline object..might be possible to grab part of this instead?
+    .populate('discipline')
     .then(cyclist => {
       if(!cyclist) {
-        throw httpErrors(404, 'note not found');
+        throw httpErrors(404, 'Cyclist not found with this id');
       }
       logger.log('info', 'GET - responding with a 200 success code at /api/cyclists/:id');
       return response.json(cyclist);
@@ -59,7 +87,7 @@ cyclistRouter.put('/api/cyclists/:id', jsonParser,  (request, response, next) =>
   return Cyclist.findByIdAndUpdate(request.params.id, request.body, options)
     .then(cyclist => {
       if(!cyclist) {
-        throw httpErrors(404, 'cyclist not found');
+        throw httpErrors(404, 'Cyclist not found with this id');
       }
       logger.log('info', 'PUT - responding with a 200 success code at /api/cyclists/:id');
       return response.json(cyclist);
@@ -71,7 +99,7 @@ cyclistRouter.delete('/api/cyclists/:id', (request, response, next) => {
   return Cyclist.findByIdAndRemove(request.params.id)
     .then(cyclist => {
       if (!cyclist) {
-        throw httpErrors(404, 'note not found');
+        throw httpErrors(404, 'Cyclist not found with this id');
       }
       logger.log('info', 'DELETE - responding with a 204 success code at /api/cyclists/:id');
       return response.sendStatus(204);

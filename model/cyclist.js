@@ -9,28 +9,23 @@ const cyclistSchema = mongoose.Schema ({
   name: {
     type: String,
     required: true,
-    unique: false,
     maxlength: 50,
   },
   age: {
     type: Number,
-    required: false,
-    unique: false,
-    maxlength: 3,
+    maxlength: 2,
   },
   eventsEntered: {
     type: Number,
-    required: false,
-    unique: false,
     maxlength: 3,
-  },
-  discipline: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'discipline',
   },
   timestamp: {
     type: Date,
     default: () => new Date(),
+  },
+  discipline: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'discipline',
   },
 });
 
@@ -45,9 +40,9 @@ cyclistSchema.pre('save', function (done) {
       return disciplineFound.save();
     })
     .then(() => done())
-    .catch(done); //this catch will trigger an error
+    .catch(done);
 });
-  //Document = the note that I JUST removed
+
 cyclistSchema.post('remove', (document, done) => {
   return Discipline.findById(document.discipline)
     .then(disciplineFound => {
@@ -55,11 +50,12 @@ cyclistSchema.post('remove', (document, done) => {
         throw httpErrors(404, 'discipline not found');
 
       disciplineFound.cyclists = disciplineFound.cyclists.filter( cyclist => {
-        return cyclist._id.toString !== document._id.toString();
+        return cyclist._id.toString() !== document._id.toString();
       });
+      return disciplineFound.save();
     })
-    .then(() => done());
-
+    .then(() => done())
+    .catch(done);
 });
 
 
