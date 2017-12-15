@@ -8,13 +8,13 @@ const disciplineMock = require('./lib/discipline-mock');
 
 const apiURL = `http://localhost:${process.env.PORT}/api/disciplines`;
 
-describe('api/disciplines', () => {
+describe('/api/disciplines', () => {
   beforeAll(server.start);
   afterAll(server.stop);
   afterEach(disciplineMock.remove);
 
-  describe('POST /disciplines', () => {
-    test.only('POST - should respond with a 200 status code if there is no error', () => {
+  describe('POST /api/disciplines', () => {
+    test('POST - should respond with a 200 status code if there is no error', () => {
       return superagent.post(`${apiURL}`)
         .send({
           name: 'Randonneur',
@@ -57,7 +57,7 @@ describe('api/disciplines', () => {
 });
 
 describe('GET /api/disciplines/:id', () => {
-  test('GET - should respond with a 200 status code if there is no error', () => {
+  test.only('GET - should respond with a 200 status code if there is no error', () => {
     let tempDisciplineMock;
 
     return disciplineMock.create()

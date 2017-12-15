@@ -19,11 +19,9 @@ const cyclistRouter = module.exports = new Router();
 
 //the next callback does not return a promise; this was introduce prior to that functionality
 cyclistRouter.post('/api/cyclists', jsonParser, (request, response, next) => {
-  console.log('hey, i\'m here bro');
   if(!request.body.name || !request.body.age) {
     return next(httpErrors(400, 'Name and age are required'));
   }
-  console.log('hey, i\'m still here man');
   return new Cyclist(request.body).save()  
     .then(cyclist => response.json(cyclist))
     .catch(error => next(error));

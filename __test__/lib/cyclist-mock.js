@@ -15,8 +15,8 @@ cyclistMock.create = () => {
 
       return new Cyclist({
         name: faker.name.firstName(2),
-        age: faker.random.number(65),
-        eventsEntered: faker.random.number(55),
+        age: faker.random.number({min: 20, max: 40}),
+        eventsEntered: faker.random.number({min: 5, max:50}),
         discipline: discipline._id,
       }).save();
     })
@@ -37,8 +37,8 @@ cyclistMock.createMany = (howMany) => {
         .map(() => {
           return new Cyclist({
             name: faker.lorem.words(2),
-            age: faker.random.number(1),
-            eventsEntered: faker.random.number(1),
+            age: faker.random.number({min: 20, max: 40}),
+            eventsEntered: faker.random.number({ min: 5, max: 50 }),
             discipline: discipline._id,
           }).save();
         }));

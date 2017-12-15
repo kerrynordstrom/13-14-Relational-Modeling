@@ -13,8 +13,10 @@ disciplineMock.create = () => {
 };
 
 disciplineMock.createMany = (howMany) => {
-  return Promise.all(new Array(howMany).fill(0)
+  return Promise.all(new Array(howMany)
+    .fill(0)
     .map( () => disciplineMock.create()));
 };
+
 
 disciplineMock.remove = () => Discipline.remove ({});
