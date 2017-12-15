@@ -1,69 +1,61 @@
-![cf](https://i.imgur.com/7v5ASc8.png) Lab 13: Express and Mongo two resource RESTful API
-======
+##Lab 13 - 
 
-## Submission Instructions
-* Work in a fork of this repository
-* Work in a branch on your fork
-* Write all of your code in a directory named `lab-` + `<your name>` **e.g.** `lab-susan`
-* Open a pull request to this repository
-* Submit on canvas a question and observation, how long you spent, and a link to your pull request
+##Objective
+To make a lightweight, RESTFUL server which has GET, POST, and DELETE CRUD methods and tests which verify common functionality of these methods.  Furthermore, a connection with a Mongo DB instance is created and information may be stored for later retrieval.  The object created for storage is a Bicycle with a schema identifying the brand, model, and discipline it is intended for.  Mongo auto generates a unique ID and timestamp which follow the object into the DB.
 
-## Resources
-* [express docs](http://expressjs.com/en/4x/api.html)
-* [mongoosse guide](http://mongoosejs.com/docs/guide.html)
-* [mongoosse api docs](http://mongoosejs.com/docs/api.html)
+#### Code Style
+-Node.js (ES6 notation where possible)
+-NPM Dependencies (body-parser, dotenv, express, mongoose, winston)
+-Development NPM packages (eslint, faker, jest, and superagent)
 
-## Configuration 
-Configure the root of your repository with the following files and directories. Thoughtfully name and organize any additional configuration or module files.
-* **README.md** - contains documentation
-* **.env** - contains env variables **(should be git ignored)**
-* **.gitignore** - contains a [robust](http://gitignore.io) `.gitignore` file 
-* **.eslintrc** - contains the course linter configuration
-* **.eslintignore** - contains the course linter ignore configuration
-* **package.json** - contains npm package config
-  * create a `lint` script for running eslint
-  * create a `test` script for running tests
-  * create a `start` script for running your server
-  * create `dbon` and `dboff` scripts for managing the mongo daemon
-* **db/** - contains mongodb files **(should be git ignored)**
-* **lib/** - contains module definitions
-* **model/** - contains module definitions
-* **route/** - contains module definitions
-* **\_\_test\_\_/** - contains test modules
+## How to Use
 
-## Feature Tasks  
-For this assignment you will be building a RESTful HTTP server using express.
+To start this app, clone this repo from 
 
-#### Model
-In the model/ directory create a Model for a resource using Mongoose (that is different from the class lecture resource). The model must include 4 properties, two of which should be required. Design your model so that it can have a relationship to a second model you will create tomorrow. It should be the `One` in a `One to Many` model relationship.
+  `http://www.github.com/kerrynordstrom/11-express-server`
 
-#### Server Endpoints
-Create the following routes for performing CRUD operations on your resource
-* `POST /api/<resource-name>` 
-  * pass data as stringifed JSON in the body of a **POST** request to create a new resource
-  * on success respond with a 200 status code and the created resource 
-  * on failure due to a bad request send a 400 status code
-* `GET /api/<resource-name>/:id` 
-  * should respond with the resource and a 200 on success
-    * if the id is not found respond with a 404
-* `PUT /api/<resource-name>/:id`    
-  * should respond with the updated resource and a 200 on success
-    * if the id is not found respond with a 404
-    * if the request is invalid it should respond with a 400
-* `DELETE /api/<resource-name>/:id` 
-  * the route should delete a resource with the given id 
-  * on success this should return a 204 status code with no content in the body
-  * on failure due to a resource with that id not existing respond with a 404 status code
+install all necessary packages with 
 
-## Tests
-* Write tests to ensure the `/api/resource-name` endpoint responds as described for each condition below:
-* POST should test for 200, 400, and 409 (if any keys are unique)
-* GET should test for 200 and 404
-* PUT should test for 200, 400, 404, and 409 (if any keys are unique)
-* DELETE should test for 204 and 404
+  `npm install`
 
-## Documentation
-In the README.md write documention for starting your server and making requests to each endpoint it provides. The documentation should describe how the server would respond to valid and invalid requests.
+Start the Mongo DB server by running the command 
 
-## Bonus 1pt
-* Create and test a GET route with pagination for returning an array of your resource.
+  `npm dbon`
+
+And run any available tests with
+
+  `npm run test`
+
+##Middleware
+
+###Logging 
+Logging is handled by the logger middleware, which parses out request methods and URLs into log JSON and also to the console.  These details are generally removed from the base code and are required by express in the server file.
+
+###Error Handling
+
+Errors are handled by the error middleware, which parses out error statuses and messages into log JSON and also to the console.  These details are generally removed from the base code and are required by express in the server file.
+
+## Server Endpoints
+
+* `GET /api/bicycles` 
+* Returns an array of all bicycles in the Mongo DB when run with no id as parameter.
+* Returns 200 success message on completion.
+
+* `GET /api/bicycles/:id` 
+* Returns a single bicycle in JSON form from the Mongo DB when run with a valid id as an argument.
+* Returns a 200 success status code if id is found.
+* Returns a 404 failure status code if id is not found.
+* `POST /api/bicycles`
+  * Creates another instance of a bicycle when stringified data is passed through POST route
+  * Returns a 200 success status code if insertion is completed
+  * Returns a 400 failure status code if either the Brand or Model are missing from the request.
+  * Returns a 500 failure status code if any errors are found in the request unrelated to the request body.
+* `DELETE /api/bicycles/:id` 
+  * Deletes a single bicycle from the Mongo DB when run with a valid id as argument
+  * Returns a 204 success status code if deletion is completed
+  * Returns a 400 failure status code if id is missing from request
+  * Returns a 404 failure status code if invalid id is included in request
+* `PUT /api/bicycles/:id`
+  * Updates a single bicycle from the Mongo DB when run with a valid id as argument
+  * Returns a 200 success status code if update is completed
+  * Returns a 404 failure status code if a correct id is not used.

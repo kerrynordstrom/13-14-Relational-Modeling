@@ -1,0 +1,39 @@
+{
+  "name": "13-14-Relational-Modeling",
+  "version": "1.0.0",
+  "description": "##Objective To make a lightweight, RESTFUL server which has GET, POST, and DELETE CRUD methods and tests which verify common functionality of these methods.  Furthermore, a connection with a Mongo DB instance is created and information may be stored for later retrieval.  The object created for storage is a Bicycle with a schema identifying the brand, model, and discipline it is intended for.  Mongo auto generates a unique ID and timestamp which follow the object into the DB.",
+  "main": "server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest -i --coverage",
+    "lint": "eslint",
+    "dbon": "mkdir -p ./db && mongod --dbpath ./db",
+    "dboff": "killall mongod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kerrynordstrom/13-14-Relational-Modeling.git"
+  },
+  "author": "Kerry Nordstrom",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kerrynordstrom/13-14-Relational-Modeling/issues"
+  },
+  "homepage": "https://github.com/kerrynordstrom/13-14-Relational-Modeling#readme",
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "faker": "^4.1.0",
+    "jest": "^21.2.1",
+    "superagent": "^3.8.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "http-errors": "^1.6.2",
+    "mongoose": "^4.13.7",
+    "winston": "^2.4.0"
+  }
+}
