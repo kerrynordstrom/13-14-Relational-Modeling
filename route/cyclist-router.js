@@ -81,7 +81,6 @@ cyclistRouter.get('/api/cyclists/:id', (request, response, next) => {
 
 cyclistRouter.put('/api/cyclists/:id', jsonParser,  (request, response, next) => {
   let options = { runValidators: true, new: true};
-
   return Cyclist.findByIdAndUpdate(request.params.id, request.body, options)
     .then(cyclist => {
       if(!cyclist) {

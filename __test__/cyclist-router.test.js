@@ -24,56 +24,60 @@ describe('api/cyclists', () => {
   describe('POST /api/cyclists', () => {
     test('POST - should respond with a bicycle and 200 status code if there is no error', () => {
       let tempDisciplineMock = null;
-      return disciplineMock.create()
-        .then(mock => {
-          tempDisciplineMock = mock;
 
-          let cyclistToPost = {
-            name: 'hellow',
-            age: 23,
-            eventsEntered: 2,
-            discipline: mock._id,
-          };
-          return superagent.post(apiURL)
-            .send(cyclistToPost)
-            .then(response => {
-              expect(response.status).toEqual(200);
-              expect(response.body._id).toBeTruthy();
-              expect(response.body.timestamp).toBeTruthy();
-              expect(typeof response.body.eventsEntered).toEqual('number');
-              expect(response.body.discipline).toEqual(tempDisciplineMock._id.toString());
-              expect(response.body.name).toEqual(cyclistToPost.name);
-              expect(response.body.age).toEqual(cyclistToPost.age);
-            })
-            .catch(error => console.log(error));
+      let cyclistToPost = {
+        name: 'hellow',
+        age: 23,
+        eventsEntered: 2,
+      };
+
+      return disciplineMock.create()
+
+        .then(mock => {
+
+          tempDisciplineMock = mock;
+          cyclistToPost.discipline = mock._id;
+          return superagent.post(`${apiURL}`)
+
+            .send(cyclistToPost);
+        })
+        .then(response => {
+          expect(response.status).toEqual(200);
+          expect(response.body._id).toBeTruthy();
+          expect(response.body.timestamp).toBeTruthy();
+          expect(typeof response.body.eventsEntered).toEqual('number');
+          expect(response.body.discipline).toEqual(tempDisciplineMock._id.toString());
+          expect(response.body.name).toEqual(cyclistToPost.name);
+          expect(response.body.age).toEqual(cyclistToPost.age);
         });
     });
-  });
 
-  test('POST - should respond with a 400 status code if the cyclist entry is incomplete', () => {
-    let cyclistToPost = {
-      age: faker.random.number(2),
-    };
-    return superagent.post(`${apiURL}`)
-      .send(cyclistToPost)
-      .then(Promise.reject)
-      .catch(response => {
-        expect(response.status).toEqual(400);
-      });
-  });
+
+    test('POST - should respond with a 400 status code if the cyclist entry is incomplete', () => {
+      let cyclistToPost = {
+        age: faker.random.number(2),
+      };
+      return superagent.post(`${apiURL}`)
+        .send(cyclistToPost)
+        .then(Promise.reject)
+        .catch(response => {
+          expect(response.status).toEqual(400);
+        });
+    });
+ 
     
-  test('POST - should respond with a 404 status code if an incorrect ID is passed', () => {
-    return superagent.post(`${apiURL}`)
-      .send({
-        name: faker.random.words(2),
-        age: 25,
-        eventsEntered: faker.random.number(1),
-        discipline: 1213224,
-      })
-      .then(Promise.reject)
-      .catch(response => {
-        expect(response.status).toEqual(404);
-      });
+    test('POST - should respond with a 404 status code if an incorrect ID is passed', () => {
+      return superagent.post(`${apiURL}`)
+        .send({
+          name: faker.random.words(2),
+          age: 25,
+          eventsEntered: faker.random.number(1),
+        })
+        .then(Promise.reject)
+        .catch(response => {
+          expect(response.status).toEqual(404);
+        });
+    });
   });
 
 
@@ -124,43 +128,43 @@ describe('api/cyclists', () => {
         expect(response.status).toEqual(404);
       });
   });
-});
 
-describe('PUT /api/cyclist', () => {
-  test('PUT - should respond with a 200 status code if there is no error', () => {
-    let cyclistToUpdate = null;
 
-    return cyclistMock.create()
-      .then(mock => {
-        console.log(mock);
-        cyclistToUpdate = mock.cyclist;
-        return superagent.put(`${apiURL}/${mock.cyclist._id}`)
-          .send({ name: 'Niels Albert' });
-      })
-      .then(response => {
-        expect(response.status).toEqual(200);
-        expect(response.body._id).toEqual(cyclistToUpdate._id.toString());
-        expect(response.body.name).toEqual('Niels Albert');
-      });
-  });
-});
+  describe('PUT /api/cyclist', () => {
+    test('PUT - should respond with a 200 status code if there is no error', () => {
+      let cyclistToUpdate = null;
 
-describe('DELETE /api/cyclist/:id', () => {
-  test('DELETE - should respond with no body and a 204 status code if there is no error', () => {
-    return cyclistMock.create()
-      .then(mock => {
-        return superagent.delete(`${apiURL}/${mock.cyclist._id}`);
-      })
-      .then(response => {
-        expect(response.status).toEqual(204);
-      });
+      return cyclistMock.create()
+        .then(mock => {
+          cyclistToUpdate = mock.cyclist;
+          return superagent.put(`${apiURL}/${mock.cyclist._id}`)
+            .send({ name: 'Niels Albert' });
+        })
+        .then(response => {
+          expect(response.status).toEqual(200);
+          expect(response.body._id).toEqual(cyclistToUpdate._id.toString());
+          expect(response.body.name).toEqual('Niels Albert');
+        });
+    });
   });
 
-  test('DELETE - should respond with a 404 status code if the id is incorrect', () => {
-    return superagent.delete(`${apiURL}/`)
-      .then(Promise.reject)
-      .catch(response => {
-        expect(response.status).toEqual(404);
-      });
+  describe('DELETE /api/cyclist/:id', () => {
+    test('DELETE - should respond with no body and a 204 status code if there is no error', () => {
+      return cyclistMock.create()
+        .then(mock => {
+          return superagent.delete(`${apiURL}/${mock.cyclist._id}`);
+        })
+        .then(response => {
+          expect(response.status).toEqual(204);
+        });
+    });
+
+    test('DELETE - should respond with a 404 status code if the id is incorrect', () => {
+      return superagent.delete(`${apiURL}/`)
+        .then(Promise.reject)
+        .catch(response => {
+          expect(response.status).toEqual(404);
+        });
+    });
   });
 });

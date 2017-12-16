@@ -9,7 +9,8 @@ disciplineMock.create = () => {
   return new Discipline({
     name: faker.lorem.words(1),
     tags: faker.lorem.words(3).split(' '),
-  }).save();
+  }).save()
+    .catch(console.log);
 };
 
 disciplineMock.createMany = (howMany) => {
